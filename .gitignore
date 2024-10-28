@@ -1,0 +1,26 @@
+# Ignorer les fichiers de compilation
+/out/
+*.class
+
+# Fichiers de configuration spécifiques à l'IDE
+.vscode/
+*.iml
+.idea/
+*.log
+*.tmp
+
+# Ignorer les fichiers batch et scripts d'exécution
+*.bat
+*.sh
+
+# Ignorer les fichiers binaires ou temporaires
+*.jar
+.DS_Store
+Thumbs.db
+test up file.md
+
+# Ignorer les fichiers de dépendance
+/lib/mysql-connector-j-*.jar
+
+# Ignorer les fichiers sensibles
+/src/ressources/application.properties

@@ -20,7 +20,7 @@ public class UserController {
     public UserController() throws SQLException {
         try {
             Properties props = new Properties();
-            try (FileInputStream fis = new FileInputStream("src/ressources/application.properties")) {
+            try (FileInputStream fis = new FileInputStream("src/resources/application.properties")) {
                 props.load(fis);
             }
 

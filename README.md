@@ -6,7 +6,7 @@
 
 ### Connection à la DB 
 
-1. Créer le fichier **application.properties** (dans `/ressources`)
+1. Créer le fichier **application.properties** (dans `/resources`)
 
 ```
 # Configuration de la connexion à la base de données MySQL

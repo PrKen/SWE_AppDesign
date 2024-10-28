@@ -23,4 +23,4 @@ test up file.md
 /lib/mysql-connector-j-*.jar
 
 # Ignorer les fichiers sensibles
-/src/resources/application.properties
+/src/ressources/application.properties

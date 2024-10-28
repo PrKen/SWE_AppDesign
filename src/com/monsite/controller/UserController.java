@@ -73,35 +73,6 @@ public class UserController {
         }
     }
 
-    private void createTables() throws SQLException {
-        try (Statement stmt = connection.createStatement()) {
-            String createUserTable = "CREATE TABLE IF NOT EXISTS users ("
-                    + "idusers INT NOT NULL AUTO_INCREMENT,"
-                    + "lastname VARCHAR(45) NOT NULL,"
-                    + "firstname VARCHAR(45) NOT NULL,"
-                    + "age VARCHAR(45) NOT NULL,"
-                    + "username VARCHAR(45) NOT NULL,"
-                    + "password VARCHAR(45) NOT NULL,"
-                    + "status VARCHAR(10) DEFAULT 'offline',"
-                    + "PRIMARY KEY (idusers)"
-                    + ")";
-            stmt.executeUpdate(createUserTable);
-
-            String createMessageTable = "CREATE TABLE IF NOT EXISTS messages ("
-                    + "id INT NOT NULL AUTO_INCREMENT,"
-                    + "sender_id INT NOT NULL,"
-                    + "receiver_id INT NOT NULL,"
-                    + "content VARCHAR(255) NOT NULL,"
-                    + "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,"
-                    + "is_pending BOOLEAN DEFAULT TRUE,"
-                    + "PRIMARY KEY (id),"
-                    + "FOREIGN KEY (sender_id) REFERENCES users(idusers),"
-                    + "FOREIGN KEY (receiver_id) REFERENCES users(idusers)"
-                    + ")";
-            stmt.executeUpdate(createMessageTable);
-        }
-    }
-
     public void start() {
         Scanner scanner = new Scanner(System.in);
         while (true) {

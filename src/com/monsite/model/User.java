@@ -6,15 +6,19 @@ public class User {
     private String firstname;
     private String age;
     private String status;
+    private String username;
+    private String password;
 
     // Constructeurs
     public User() {}
 
-    public User(String lastname, String firstname, String age, String status) {
+    public User(String lastname, String firstname, String age, String status, String username, String password) {
         this.lastname = lastname;
         this.firstname = firstname;
         this.age = age;
         this.status = status;
+        this.username = username;
+        this.password = password;
     }
 
     // Getters et setters
@@ -56,5 +60,21 @@ public class User {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

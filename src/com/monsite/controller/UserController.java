@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
@@ -18,6 +19,7 @@ public class UserController {
     private UserService userService;
     private MessageService messageService;
     private Connection connection;
+    private User currentUser;
 
     public UserController() throws SQLException {
         try {
@@ -32,11 +34,14 @@ public class UserController {
 
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(url, username, password);
+
+            createTables();
         } catch (ClassNotFoundException | IOException e) {
             throw new SQLException("Erreur lors du chargement du driver JDBC ou des propriétés : " + e.getMessage());
         }
         UserRepository userRepository = new UserRepository(connection);
         userService = new UserService(userRepository);
+        messageService = new MessageService(connection);
     }
 
     private void createTables() throws SQLException {
@@ -67,19 +72,27 @@ public class UserController {
             stmt.executeUpdate(createMessageTable);
         }
     }
-
     public void start() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            System.out.println("Choisissez une option : 1. Voir tous les utilisateurs 2. Ajouter un utilisateur 3. Quitter");
+            System.out.println("Choisissez une option : 1. Se connecter 2. Créer un profil 3. Quitter");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consommer la nouvelle ligne
             try {
                 switch (choice) {
                     case 1:
-                        List<User> users = userService.getAllUsers();
-                        for (User user : users) {
-                            System.out.println(user.getFirstname() + " " + user.getLastname() + " - Age: " + user.getAge() + " - Status: " + user.getStatus());
+                        System.out.println("Entrez votre nom d'utilisateur :");
+                        String username = scanner.nextLine();
+                        System.out.println("Entrez votre mot de passe :");
+                        String password = scanner.nextLine();
+                        currentUser = userService.authenticateUser(username, password);
+                        if (currentUser != null) {
+                            currentUser.setStatus("online");
+                            userService.updateUserStatus(currentUser);
+                            System.out.println("Connexion réussie ! Bienvenue " + currentUser.getFirstname());
+                            userMenu();
+                        } else {
+                            System.out.println("Nom d'utilisateur ou mot de passe incorrect.");
                         }
                         break;
                     case 2:
@@ -89,13 +102,20 @@ public class UserController {
                         String firstname = scanner.nextLine();
                         System.out.println("Entrez l'âge :");
                         String age = scanner.nextLine();
-                        System.out.println("Entrez le statut :");
-                        String status = scanner.nextLine();
-                        User user = new User(lastname, firstname, age, status);
-                        userService.saveUser(user);
+                        System.out.println("Entrez le nom d'utilisateur :");
+                        username = scanner.nextLine();
+                        System.out.println("Entrez le mot de passe :");
+                        password = scanner.nextLine();
+                        User newUser = new User(lastname, firstname, age, "offline", username, password);
+                        userService.saveUser(newUser);
+                        System.out.println("Profil créé avec succès ! Veuillez vous connecter.");
                         break;
                     case 3:
                         System.out.println("Fermeture de l'application.");
+                        if (currentUser != null) {
+                            currentUser.setStatus("offline");
+                            userService.updateUserStatus(currentUser);
+                        }
                         connection.close();
                         scanner.close();
                         return;

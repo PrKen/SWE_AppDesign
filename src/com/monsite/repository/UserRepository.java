@@ -1,7 +1,11 @@
 package com.monsite.repository;
 
 import com.monsite.model.User;
-import java.sql.*;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,31 +16,87 @@ public class UserRepository {
         this.connection = connection;
     }
 
+    public User findByUsernameAndPassword(String username, String password) throws SQLException {
+        String query = "SELECT * FROM users WHERE username = ? AND password = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setId(rs.getLong("idusers"));
+                    user.setLastname(rs.getString("lastname"));
+                    user.setFirstname(rs.getString("firstname"));
+                    user.setAge(rs.getString("age"));
+                    user.setUsername(rs.getString("username"));
+                    user.setPassword(rs.getString("password"));
+                    user.setStatus(rs.getString("status"));
+                    return user;
+                }
+            }
+        }
+        return null;
+    }
+
+    public User findByUsername(String username) throws SQLException {
+        String query = "SELECT * FROM users WHERE username = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setId(rs.getLong("idusers"));
+                    user.setLastname(rs.getString("lastname"));
+                    user.setFirstname(rs.getString("firstname"));
+                    user.setAge(rs.getString("age"));
+                    user.setUsername(rs.getString("username"));
+                    user.setPassword(rs.getString("password"));
+                    user.setStatus(rs.getString("status"));
+                    return user;
+                }
+            }
+        }
+        return null;
+    }
+
+    public void updateStatus(User user) throws SQLException {
+        String query = "UPDATE users SET status = ? WHERE idusers = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, user.getStatus());
+            pstmt.setLong(2, user.getId());
+            pstmt.executeUpdate();
+        }
+    }
+
+    public void save(User user) throws SQLException {
+        String query = "INSERT INTO users (lastname, firstname, age, username, password, status) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, user.getLastname());
+            pstmt.setString(2, user.getFirstname());
+            pstmt.setString(3, user.getAge());
+            pstmt.setString(4, user.getUsername());
+            pstmt.setString(5, user.getPassword());
+            pstmt.setString(6, user.getStatus());
+            pstmt.executeUpdate();
+        }
+    }
+
     public List<User> findAll() throws SQLException {
-        List<User> users = new ArrayList<>();
         String query = "SELECT * FROM users";
-        try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
+        List<User> users = new ArrayList<>();
+        try (PreparedStatement pstmt = connection.prepareStatement(query); ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 User user = new User();
                 user.setId(rs.getLong("idusers"));
                 user.setLastname(rs.getString("lastname"));
                 user.setFirstname(rs.getString("firstname"));
                 user.setAge(rs.getString("age"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
                 user.setStatus(rs.getString("status"));
                 users.add(user);
             }
         }
         return users;
-    }
-
-    public void save(User user) throws SQLException {
-        String query = "INSERT INTO users (lastname, firstname, age, status) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            pstmt.setString(1, user.getLastname());
-            pstmt.setString(2, user.getFirstname());
-            pstmt.setString(3, user.getAge());
-            pstmt.setString(4, user.getStatus());
-            pstmt.executeUpdate();
-        }
     }
 }

@@ -41,7 +41,7 @@ public class UserController {
         }
         UserRepository userRepository = new UserRepository(connection);
         userService = new UserService(userRepository);
-        messageService = new MessageService(connection);
+        messageService = new MessageService(connection); // Assurez-vous que la classe MessageService existe et que la connexion est bien passée
     }
 
     private void createTables() throws SQLException {
@@ -77,7 +77,7 @@ public class UserController {
         while (true) {
             System.out.println("Choisissez une option : 1. Se connecter 2. Créer un profil 3. Quitter");
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Consommer la nouvelle ligne
+            scanner.nextLine();
             try {
                 switch (choice) {
                     case 1:

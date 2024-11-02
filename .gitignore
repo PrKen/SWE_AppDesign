@@ -10,7 +10,6 @@
 *.tmp
 
 # Ignorer les fichiers batch et scripts d'exécution
-*.bat
 *.sh
 
 # Ignorer les fichiers binaires ou temporaires

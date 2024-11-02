@@ -26,10 +26,14 @@ public class UserService {
     }
 
     public void saveUser(User user) throws SQLException {
-        userRepository.save(user);
+        userRepository.saveUser(user);
     }
 
     public List<User> getAllUsers() throws SQLException {
         return userRepository.findAll();
+    }
+
+    public User findById(Long userId) throws SQLException {
+        return userRepository.findById(userId);
     }
 }

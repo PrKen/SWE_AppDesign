@@ -16,6 +16,10 @@ public class MessageRepository {
         this.connection = connection;
     }
 
+    public Connection getConnection() {
+        return connection;
+    }
+
     public void save(Message message) throws SQLException {
         String query = "INSERT INTO messages (sender_id, receiver_id, content, is_pending) VALUES (?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {

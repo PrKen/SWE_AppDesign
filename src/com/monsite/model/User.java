@@ -1,32 +1,33 @@
 package com.monsite.model;
 
 public class User {
-    private Long id;
+    private long id;  // Updated type to long to handle larger values and match database type
     private String lastname;
     private String firstname;
-    private String age;
-    private String status;
+    private String email;
     private String username;
     private String password;
+    private String status;
 
-    // Constructeurs
-    public User() {}
-
-    public User(String lastname, String firstname, String age, String status, String username, String password) {
-        this.lastname = lastname;
-        this.firstname = firstname;
-        this.age = age;
-        this.status = status;
-        this.username = username;
-        this.password = password;
+    public User() {
+        // Constructeur par défaut
     }
 
-    // Getters et setters
-    public Long getId() {
+    public User(String lastname, String firstname, String email, String username, String password, String status) {
+        this.lastname = lastname;
+        this.firstname = firstname;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.status = status;
+    }
+
+    // Getters et Setters
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -46,20 +47,15 @@ public class User {
         this.firstname = firstname;
     }
 
-    public String getAge() {
-        return age;
+    public String getEmail() {
+        return email;
     }
 
-    public void setAge(String age) {
-        this.age = age;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+    public void setEmail(String email) {
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("Email ne peut pas être vide");
+        }
+        this.email = email;
     }
 
     public String getUsername() {
@@ -76,5 +72,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

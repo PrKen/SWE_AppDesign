@@ -18,6 +18,7 @@
 .DS_Store
 Thumbs.db
 test up file.md
+*.zip
 
 # Ignorer les fichiers de dépendance
 /lib/mysql-connector-j-*.jar

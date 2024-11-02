@@ -17,17 +17,35 @@ public class MessageService {
     }
 
     public void sendMessage(Long senderId, Long receiverId, String content) throws SQLException {
-        String query = "INSERT INTO messages (sender_id, receiver_id, content, is_pending) VALUES (?, ?, ?, true)";
+        // Éviter d'envoyer des messages en double
+        if (!messageAlreadyExists(senderId, receiverId, content)) {
+            String query = "INSERT INTO messages (sender_id, receiver_id, content, is_pending) VALUES (?, ?, ?, true)";
+            try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+                pstmt.setLong(1, senderId);
+                pstmt.setLong(2, receiverId);
+                pstmt.setString(3, content);
+                pstmt.executeUpdate();
+            }
+        }
+    }
+
+    public boolean messageAlreadyExists(Long senderId, Long receiverId, String content) throws SQLException {
+        String query = "SELECT COUNT(*) FROM messages WHERE sender_id = ? AND receiver_id = ? AND content = ? AND is_pending = true";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setLong(1, senderId);
             pstmt.setLong(2, receiverId);
             pstmt.setString(3, content);
-            pstmt.executeUpdate();
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next() && rs.getInt(1) > 0) {
+                    return true;
+                }
+            }
         }
+        return false;
     }
 
     public List<Message> getPendingMessages(Long userId) throws SQLException {
-        String query = "SELECT * FROM messages WHERE receiver_id = ? AND is_pending = true";
+        String query = "SELECT * FROM messages WHERE receiver_id = ? AND is_pending = true ORDER BY timestamp";
         List<Message> messages = new ArrayList<>();
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setLong(1, userId);

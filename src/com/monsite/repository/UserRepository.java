@@ -27,7 +27,7 @@ public class UserRepository {
                     user.setId(rs.getLong("idusers"));
                     user.setLastname(rs.getString("lastname"));
                     user.setFirstname(rs.getString("firstname"));
-                    user.setAge(rs.getString("age"));
+                    user.setEmail(rs.getString("email"));
                     user.setUsername(rs.getString("username"));
                     user.setPassword(rs.getString("password"));
                     user.setStatus(rs.getString("status"));
@@ -48,7 +48,7 @@ public class UserRepository {
                     user.setId(rs.getLong("idusers"));
                     user.setLastname(rs.getString("lastname"));
                     user.setFirstname(rs.getString("firstname"));
-                    user.setAge(rs.getString("age"));
+                    user.setEmail(rs.getString("email"));
                     user.setUsername(rs.getString("username"));
                     user.setPassword(rs.getString("password"));
                     user.setStatus(rs.getString("status"));
@@ -68,16 +68,22 @@ public class UserRepository {
         }
     }
 
-    public void save(User user) throws SQLException {
-        String query = "INSERT INTO users (lastname, firstname, age, username, password, status) VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+    public void saveUser(User user) throws SQLException {
+        String query = "INSERT INTO users (lastname, firstname, email, username, password, status) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, user.getLastname());
             pstmt.setString(2, user.getFirstname());
-            pstmt.setString(3, user.getAge());
+            pstmt.setString(3, user.getEmail());
             pstmt.setString(4, user.getUsername());
             pstmt.setString(5, user.getPassword());
             pstmt.setString(6, user.getStatus());
             pstmt.executeUpdate();
+
+            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    user.setId(generatedKeys.getLong(1));
+                }
+            }
         }
     }
 
@@ -90,7 +96,7 @@ public class UserRepository {
                 user.setId(rs.getLong("idusers"));
                 user.setLastname(rs.getString("lastname"));
                 user.setFirstname(rs.getString("firstname"));
-                user.setAge(rs.getString("age"));
+                user.setEmail(rs.getString("email"));
                 user.setUsername(rs.getString("username"));
                 user.setPassword(rs.getString("password"));
                 user.setStatus(rs.getString("status"));
@@ -98,5 +104,26 @@ public class UserRepository {
             }
         }
         return users;
+    }
+
+    public User findById(Long userId) throws SQLException {
+        String query = "SELECT * FROM users WHERE idusers = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setLong(1, userId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setId(rs.getLong("idusers"));
+                    user.setLastname(rs.getString("lastname"));
+                    user.setFirstname(rs.getString("firstname"));
+                    user.setEmail(rs.getString("email"));
+                    user.setUsername(rs.getString("username"));
+                    user.setPassword(rs.getString("password"));
+                    user.setStatus(rs.getString("status"));
+                    return user;
+                }
+            }
+        }
+        return null;
     }
 }
